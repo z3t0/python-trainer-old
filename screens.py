@@ -1,5 +1,6 @@
 from functools import partial
 from lib import install
+from data import get_lesson_books_lst
 
 echo = partial(print, end='', flush=True)
 
@@ -62,17 +63,9 @@ class WelcomeScreen(Screen):
             self.screen_manager.next_screen(ps)
 
         def _begin():
-            lst = []
+            lesson_books = get_lesson_books_lst()
 
-            elem = {
-                'string': 'Hello',
-                'action': None
-            }
-
-            lst.append(elem)
-            lst.append(elem)
-            
-            bs = ListSelectScreen(lst, self.screen_manager)
+            bs = ListSelectScreen(lesson_books, self.screen_manager)
             self.screen_manager.next_screen(bs)
             
        
@@ -112,6 +105,9 @@ class PromptScreen(Screen):
 class ListSelectScreen(Screen):
     def __init__(self, lst, screen_manager):
         Screen.__init__(self, screen_manager)
+        from remote_pdb import RemotePdb
+        RemotePdb('localhost', 4444).set_trace()
+
 
         if not lst or len(lst) < 0:
             raise Exception("Please check lst")
@@ -137,7 +133,6 @@ class ListSelectScreen(Screen):
             elif key.name == 'KEY_UP':
                 self.selected = max(self.selected - 1, 0)
             elif key.name == 'KEY_ENTER':
-                from remote_pdb import RemotePdb
-                RemotePdb('localhost', 4444).set_trace()
+                pass
 
             self.screen_manager.render()
